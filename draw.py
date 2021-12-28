@@ -4,7 +4,7 @@ Version: 1.0
 Author: SHAO Nuoya
 Date: 2021-12-28 02:05:04
 LastEditors: SHAO Nuoya
-LastEditTime: 2021-12-28 03:11:00
+LastEditTime: 2021-12-28 19:24:36
 '''
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -31,23 +31,27 @@ def plot_corr(data1, data2):
     sns.heatmap(corr)
 
 
-def plot_trajectoire(ns, data):
-    plt.plot(ns, data)
+def plot_trajectoire(data):
+    plt.plot(data)
 
 
 eur_data = get_data('Result/DeltaEUR_CALL.txt')
 asia_data = get_data('Result/DeltaASIA_CALL.txt')
-ns = get_data('Result/ns.txt')
 
-plt.figure(figsize=(20, 15))
+plt.figure(figsize=(10, 10))
+
 plt.subplot(2, 1, 1)
-plot_trajectoire(ns, eur_data)
+plot_trajectoire(eur_data)
 plt.title("european call delta")
 plt.xlabel('n')
 plt.ylabel('delta')
+plt.grid()
+
 plt.subplot(2, 1, 2)
-plot_trajectoire(ns, asia_data)
+plot_trajectoire(asia_data)
 plt.title("asian call delta")
 plt.xlabel('n')
 plt.ylabel('delta')
+plt.grid()
+plt.savefig('Result/delta.png')
 plt.show()

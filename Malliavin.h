@@ -20,12 +20,12 @@ public:
 	Malliavin(float S0, float r, float sigma, float T, float K, int I, int N);
 	Malliavin();
 
-	float generate_Wt(float t);
+	float generate_N01();
 	vector<float> generate_St();
 	//option type : European, Asian, Barrier
 	float payoff(string option_type, vector<float> S);
 	
-	float delta(string option_type, int n);
+	vector<float> delta(string option_type, int n);
 	//float gamma(string option_type);
 	//float vega(string option_type);
 	//float rho(string option_type);

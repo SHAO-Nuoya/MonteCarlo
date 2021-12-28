@@ -14,7 +14,6 @@ float Var(vector<float> vec) {
     return var / N;
 }
 
-
 //output
 void to_txt(vector<float> array, string filename) {
     ofstream outfile;
