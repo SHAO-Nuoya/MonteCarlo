@@ -3,3 +3,5 @@
 *.vcxproj*
 x64
 *test*
+*.exe
+*.vscode
