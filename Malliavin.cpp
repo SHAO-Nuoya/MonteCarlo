@@ -16,7 +16,7 @@ using namespace std;
 Malliavin::Malliavin(float S0_, float r_, float sigma_, float T_, float K_, int I_, int N_) :
 	S0(S0_), r(r_), sigma(sigma_), T(T_), K(K_), I(I_), N(N_) {};
 
-Malliavin::Malliavin():S0(100), r(0), sigma(0.2), T(1), K(100), I(100), N(10000) {};
+Malliavin::Malliavin():S0(100), r(0), sigma(0.2), T(1), K(100), I(1000), N(10000) {};
 
 float Malliavin::generate_N01() {
 	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
@@ -33,7 +33,7 @@ vector<float> Malliavin::generate_St() {
 	for (int i = 1; i < I; i++) {
 		t = i * h;
 		b = r - pow(sigma, 2) / 2;
-		s = S.back() * exp(r * h + sigma * sqrt(h) * generate_N01());
+		s = S.back() * exp(b * h + sigma * sqrt(h) * generate_N01());
 		S.push_back(s);
 	}
 	return S;

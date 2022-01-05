@@ -4,7 +4,7 @@ Version: 1.0
 Author: SHAO Nuoya
 Date: 2021-12-28 02:05:04
 LastEditors: SHAO Nuoya
-LastEditTime: 2021-12-28 19:24:36
+LastEditTime: 2022-01-05 00:34:36
 '''
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -32,7 +32,7 @@ def plot_corr(data1, data2):
 
 
 def plot_trajectoire(data):
-    plt.plot(data)
+    plt.plot(range(100, len(data)), data[100:])
 
 
 eur_data = get_data('Result/DeltaEUR_CALL.txt')
