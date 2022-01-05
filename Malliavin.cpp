@@ -16,7 +16,7 @@ using namespace std;
 Malliavin::Malliavin(float S0_, float r_, float sigma_, float T_, float K_, int I_, int N_) :
 	S0(S0_), r(r_), sigma(sigma_), T(T_), K(K_), I(I_), N(N_) {};
 
-Malliavin::Malliavin():S0(100), r(0), sigma(0.2), T(1), K(100), I(1000), N(10000) {};
+Malliavin::Malliavin():S0(100), r(0), sigma(0.2), T(1), K(100), I(100), N(10000) {};
 
 float Malliavin::generate_N01() {
 	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
@@ -67,4 +67,40 @@ vector<float> Malliavin::delta(string option_type, int N) {
 		Deltas.push_back(d_sum/(i+1));
 	}
 	return Deltas;
+}
+
+vector<float> Malliavin::gamma(string option_type, int N) {
+	vector<float> Gammas, S;
+	float WT, d_sum = 0;
+	for (int i = 0; i < N; i++) {
+		S = generate_St();
+
+		if (option_type == "EUR_CALL") {
+			WT = (log(S.back() / S0) - (r - pow(sigma, 2) / 2)) / sigma;
+			d_sum += exp(-r * T) * payoff(option_type, S) * (pow(WT, 2) / (sigma * T) - WT - 1 / sigma) / (pow(S0, 2) * sigma * T);
+		}
+		else if (option_type == "ASIA_CALL") {
+			d_sum += 0;
+		}
+		Gammas.push_back(d_sum / (i + 1));
+	}
+	return Gammas;
+}
+
+vector<float> Malliavin::vega(string option_type, int N) {
+	vector<float> Vegas, S;
+	float WT, d_sum = 0;
+	for (int i = 0; i < N; i++) {
+		S = generate_St();
+
+		if (option_type == "EUR_CALL") {
+			WT = (log(S.back() / S0) - (r - pow(sigma, 2) / 2)) / sigma;
+			d_sum += exp(-r * T) * payoff(option_type, S) * (pow(WT, 2) / (sigma * T) - WT - 1 / sigma);
+		}
+		else if (option_type == "ASIA_CALL") {
+			d_sum += 0;
+		}
+		Vegas.push_back(d_sum / (i + 1));
+	}
+	return Vegas;
 }

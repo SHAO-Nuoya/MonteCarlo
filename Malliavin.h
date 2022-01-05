@@ -26,8 +26,7 @@ public:
 	float payoff(string option_type, vector<float> S);
 	
 	vector<float> delta(string option_type, int n);
-	//float gamma(string option_type);
-	//float vega(string option_type);
-	//float rho(string option_type);
+	vector<float> gamma(string option_type, int n);
+	vector<float> vega(string option_type, int n);
 };
 
