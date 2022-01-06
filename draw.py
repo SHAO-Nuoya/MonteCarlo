@@ -4,7 +4,7 @@ Version: 1.0
 Author: SHAO Nuoya
 Date: 2021-12-28 02:05:04
 LastEditors: SHAO Nuoya
-LastEditTime: 2022-01-05 15:44:48
+LastEditTime: 2022-01-06 19:02:23
 '''
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -31,8 +31,24 @@ def plot_corr(data1, data2):
     sns.heatmap(corr)
 
 
-def plot_trajectoire(data):
-    plt.plot(range(100, len(data)), data[100:])
+def plot_greek(eur_data, asia_data, greek_name):
+    plt.figure(figsize=(10, 10))
+
+    plt.subplot(2, 1, 1)
+    plt.plot(range(100, len(eur_data)), eur_data[100:])
+    plt.title(f"european call {greek_name}")
+    plt.xlabel('n')
+    plt.ylabel(greek_name)
+    plt.grid()
+
+    plt.subplot(2, 1, 2)
+    plt.plot(range(100, len(asia_data)), asia_data[100:])
+    plt.title(f"asian call {greek_name}")
+    plt.xlabel('n')
+    plt.ylabel(greek_name)
+    plt.grid()
+    plt.savefig(f'Result/{greek_name}.png')
+    plt.show()
 
 
 eur_delta = get_data('Result/Delta_EUR_CALL.txt')
@@ -41,57 +57,10 @@ eur_gamma = get_data('Result/Gamma_EUR_CALL.txt')
 asia_gamma = get_data('Result/Gamma_ASIA_CALL.txt')
 eur_vega = get_data('Result/Vega_EUR_CALL.txt')
 asia_vega = get_data('Result/Vega_ASIA_CALL.txt')
+eur_rho = get_data('Result/Rho_EUR_CALL.txt')
+asia_rho = get_data('Result/Rho_ASIA_CALL.txt')
 
-plt.figure(figsize=(10, 10))
-
-plt.subplot(2, 1, 1)
-plot_trajectoire(eur_delta)
-plt.title("european call delta")
-plt.xlabel('n')
-plt.ylabel('delta')
-plt.grid()
-
-plt.subplot(2, 1, 2)
-plot_trajectoire(asia_delta)
-plt.title("asian call delta")
-plt.xlabel('n')
-plt.ylabel('delta')
-plt.grid()
-plt.savefig('Result/delta.png')
-plt.show()
-
-plt.figure(figsize=(10, 10))
-
-plt.subplot(2, 1, 1)
-plot_trajectoire(eur_gamma)
-plt.title("european call gamma")
-plt.xlabel('n')
-plt.ylabel('gamma')
-plt.grid()
-
-plt.subplot(2, 1, 2)
-plot_trajectoire(asia_gamma)
-plt.title("asian call gamma")
-plt.xlabel('n')
-plt.ylabel('gamma')
-plt.grid()
-plt.savefig('Result/gamma.png')
-plt.show()
-
-plt.figure(figsize=(10, 10))
-
-plt.subplot(2, 1, 1)
-plot_trajectoire(eur_vega)
-plt.title("european call vega")
-plt.xlabel('n')
-plt.ylabel('vega')
-plt.grid()
-
-plt.subplot(2, 1, 2)
-plot_trajectoire(asia_vega)
-plt.title("asian call vega")
-plt.xlabel('n')
-plt.ylabel('vega')
-plt.grid()
-plt.savefig('Result/vega.png')
-plt.show()
+plot_greek(eur_delta, asia_delta, 'delta')
+plot_greek(eur_gamma, asia_gamma, 'gamma')
+plot_greek(eur_vega, asia_vega, 'vega')
+plot_greek(eur_rho, asia_rho, 'rho')

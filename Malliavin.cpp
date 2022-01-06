@@ -51,18 +51,49 @@ float Malliavin::payoff(string option_type, vector<float> S) {
 };
 
 // n is the time of simulation
+vector<float> Malliavin::rho(string option_type, int N) {
+	vector<float> rhos, S;
+	float WT, r_sum = 0;
+	float sigma2 = pow(sigma, 2);
+	float b = r - sigma2 / 2;
+
+	for (int i = 0; i < N; i++) {
+		S = generate_St();
+		float ST = S.back();
+
+		if (option_type == "EUR_CALL") {
+			float actualised_payoff = exp(-r * T) * payoff(option_type, S);
+			WT = (log(ST / S0) - b) / sigma;
+			r_sum += actualised_payoff * (WT / sigma - T);
+		}
+		else if (option_type == "ASIA_CALL") {
+			r_sum += 0;
+		}
+		rhos.push_back(r_sum / (i + 1));
+	}
+	return rhos;
+}
+
+
 vector<float> Malliavin::delta(string option_type, int N) {
 	vector<float> Deltas, S;
 	float WT, d_sum = 0;
+	float sigma2 = pow(sigma, 2);
+	float b = r - sigma2 / 2;
+
 	for (int i = 0; i < N; i++) {
 		S = generate_St();
+		float ST = S.back();
 
 		if (option_type == "EUR_CALL") {
-			WT = (log(S.back() / S0) - (r - pow(sigma, 2) / 2)) / sigma;
-			d_sum += exp(-r * T) * payoff(option_type, S) * WT / (S0 * sigma * T);
+			float actualised_payoff = exp(-r * T) * payoff(option_type, S);
+			WT = (log(ST / S0) - b) / sigma;
+			d_sum += actualised_payoff * WT / (S0 * sigma * T);
 		}
 		else if (option_type == "ASIA_CALL") {
-			d_sum += exp(-r * T) * payoff(option_type, S) * (2 * (S.back() - S0) / (S0 * pow(sigma, 2) * Sum(S)*h) + (1 - 2 * r / pow(sigma, 2)) / S0);
+			float Integral_S = Sum(S) * h; //integration of S from 0 to T
+			float actualised_payoff = exp(-r * T) * payoff(option_type, S);
+			d_sum += actualised_payoff * (2 * (ST - S0) / (S0 * sigma2 * Integral_S) + (1 - 2 * r / sigma2) / S0);
 		}
 		Deltas.push_back(d_sum/(i+1));
 	}
@@ -71,36 +102,75 @@ vector<float> Malliavin::delta(string option_type, int N) {
 
 vector<float> Malliavin::gamma(string option_type, int N) {
 	vector<float> Gammas, S;
-	float WT, d_sum = 0;
+	float WT, g_sum = 0;
+	float sigma2 = pow(sigma, 2);
+	float b = r - sigma2 / 2;
+
 	for (int i = 0; i < N; i++) {
 		S = generate_St();
+		float ST = S.back();
 
 		if (option_type == "EUR_CALL") {
-			WT = (log(S.back() / S0) - (r - pow(sigma, 2) / 2)) / sigma;
-			d_sum += exp(-r * T) * payoff(option_type, S) * (pow(WT, 2) / (sigma * T) - WT - 1 / sigma) / (pow(S0, 2) * sigma * T);
+			float actualised_payoff = exp(-r * T) * payoff(option_type, S);
+			WT = (log(ST / S0) - b) / sigma;
+			g_sum += actualised_payoff * (pow(WT, 2) / (sigma * T) - WT - 1 / sigma) / (pow(S0, 2) * sigma * T);
 		}
 		else if (option_type == "ASIA_CALL") {
-			d_sum += 0;
+			float Integral_S = Sum(S) * h; //integration of S from 0 to T
+			float Upper_ST = Integral_S / T; //integration over time
+			float actualised_payoff = exp(-r * T) * payoff(option_type, S);
+			g_sum += 4 * actualised_payoff * (pow(ST - S0, 2) + b * r * pow(T * Upper_ST, 2) - 2 * r * T * ST * Upper_ST + 2 * b * T * S0 * Upper_ST) / pow(sigma2 * S0 * T * Upper_ST, 2);
 		}
-		Gammas.push_back(d_sum / (i + 1));
+		Gammas.push_back(g_sum / (i + 1));
 	}
 	return Gammas;
 }
 
 vector<float> Malliavin::vega(string option_type, int N) {
-	vector<float> Vegas, S;
-	float WT, d_sum = 0;
-	for (int i = 0; i < N; i++) {
-		S = generate_St();
-
-		if (option_type == "EUR_CALL") {
-			WT = (log(S.back() / S0) - (r - pow(sigma, 2) / 2)) / sigma;
-			d_sum += exp(-r * T) * payoff(option_type, S) * (pow(WT, 2) / (sigma * T) - WT - 1 / sigma);
-		}
-		else if (option_type == "ASIA_CALL") {
-			d_sum += 0;
-		}
-		Vegas.push_back(d_sum / (i + 1));
+	vector<float> Vegas, Gammas;
+	float factor = pow(S0, 2) * sigma * T;
+	if (option_type == "EUR_CALL") {
+		Gammas = gamma(option_type, N);
 	}
+	else if (option_type == "ASIA_CALL") {
+		Gammas = gamma(option_type, N);
+	}
+	Vegas = multiply(Gammas, factor);
+
 	return Vegas;
 }
+
+//analytical Greeks
+//no analytical solution for arithmetic asian option
+float Malliavin::greeks(string greek_name, string option_type = "EUR_CALL") {
+	float greek;
+	if (option_type == "EUR_CALL") {
+		if (greek_name == "delta") {
+			greek = 0;
+		}
+		else if (greek_name == "gamma") {
+			greek = 0;
+		}
+		else if (greek_name == "vega") {
+			greek = 0;
+		}
+		else if (greek_name == "rho") {
+			greek = 0;
+		}
+	}
+	else if (option_type == "") {
+		if (greek_name == "delta") {
+			greek = 0;
+		}
+		else if (greek_name == "gamma") {
+			greek = 0;
+		}
+		else if (greek_name == "vega") {
+			greek = 0;
+		}
+		else if (greek_name == "rho") {
+			greek = 0;
+		}
+	}
+	return greek;
+};

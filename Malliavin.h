@@ -22,11 +22,17 @@ public:
 
 	float generate_N01();
 	vector<float> generate_St();
+
 	//option type : European, Asian, Barrier
 	float payoff(string option_type, vector<float> S);
 	
+	//simulation
+	vector<float> rho(string option_type, int n);
 	vector<float> delta(string option_type, int n);
 	vector<float> gamma(string option_type, int n);
 	vector<float> vega(string option_type, int n);
+
+	//analytical Greeks
+	float greeks(string greek_name, string option_type);
 };
 
