@@ -29,11 +29,13 @@ float Malliavin::generate_N01() {
 vector<float> Malliavin::generate_St() {
 	vector<float> S;
 	S.push_back(S0);
-	float b, t, s;
+	float t, s, s_pre, dw;
+	float b = r - pow(sigma, 2) / 2;
 	for (int i = 1; i < I; i++) {
 		t = i * h;
-		b = r - pow(sigma, 2) / 2;
-		s = S.back() * exp(b * h + sigma * sqrt(h) * generate_N01());
+		s_pre = S.back();
+		dw = sqrt(h) * generate_N01();
+		s = s_pre + r * s_pre * h + sigma * s_pre * dw + pow(sigma, 2) * s_pre * (pow(dw, 2) - h) / 2;
 		S.push_back(s);
 	}
 	return S;
