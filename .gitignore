@@ -1,8 +1,9 @@
 *.vs
 *.sln
 *.vcxproj*
-x64
+x64/
 *test*
 *.exe
 *.vscode
-Result
+Result/*.txt
+

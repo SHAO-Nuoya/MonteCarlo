@@ -3,7 +3,7 @@
 #include<vector>
 
 using namespace std;
-class Malliavin {
+class FiniteDiff {
 private:
 	float S0; //current price of underlying
 	float r; //risk free rate
@@ -16,9 +16,9 @@ public:
 	int N; //simulation time
 	float h = T / I; //time step
 
-	Malliavin(float S0, float r, float sigma, float T, float K, int I, int N);
-	Malliavin();
-	
+	FiniteDiff(float S0, float r, float sigma, float T, float K, int I, int N);
+	FiniteDiff();
+
 	//simulation
 	vector<float> rho(string option_type, int n);
 	vector<float> delta(string option_type, int n);

@@ -4,7 +4,7 @@ Version: 1.0
 Author: SHAO Nuoya
 Date: 2021-12-28 02:05:04
 LastEditors: SHAO Nuoya
-LastEditTime: 2022-01-06 19:02:23
+LastEditTime: 2022-01-07 20:18:05
 '''
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -31,36 +31,58 @@ def plot_corr(data1, data2):
     sns.heatmap(corr)
 
 
-def plot_greek(eur_data, asia_data, greek_name):
+def plot_greek(FD_eur_data, FD_asia_data, M_eur_data, M_asia_data, greek_name):
     plt.figure(figsize=(10, 10))
 
     plt.subplot(2, 1, 1)
-    plt.plot(range(100, len(eur_data)), eur_data[100:])
+    plt.plot(range(500, len(FD_eur_data)),
+             FD_eur_data[500:],
+             label='Finite Diff')
+    plt.plot(range(500, len(M_eur_data)), M_eur_data[500:], label='Malliavin')
     plt.title(f"european call {greek_name}")
     plt.xlabel('n')
     plt.ylabel(greek_name)
     plt.grid()
+    plt.legend()
 
     plt.subplot(2, 1, 2)
-    plt.plot(range(100, len(asia_data)), asia_data[100:])
+    plt.plot(range(500, len(FD_asia_data)),
+             FD_asia_data[500:],
+             label='Finite Diff')
+    plt.plot(range(500, len(M_asia_data)),
+             M_asia_data[500:],
+             label='Malliavin')
     plt.title(f"asian call {greek_name}")
     plt.xlabel('n')
     plt.ylabel(greek_name)
     plt.grid()
+    plt.legend()
+
     plt.savefig(f'Result/{greek_name}.png')
     plt.show()
 
 
-eur_delta = get_data('Result/Delta_EUR_CALL.txt')
-asia_delta = get_data('Result/Delta_ASIA_CALL.txt')
-eur_gamma = get_data('Result/Gamma_EUR_CALL.txt')
-asia_gamma = get_data('Result/Gamma_ASIA_CALL.txt')
-eur_vega = get_data('Result/Vega_EUR_CALL.txt')
-asia_vega = get_data('Result/Vega_ASIA_CALL.txt')
-eur_rho = get_data('Result/Rho_EUR_CALL.txt')
-asia_rho = get_data('Result/Rho_ASIA_CALL.txt')
+# # Malliavin
+m_eur_delta = get_data('Result/M_Delta_EUR_CALL.txt')
+m_asia_delta = get_data('Result/M_Delta_ASIA_CALL.txt')
+m_eur_gamma = get_data('Result/M_Gamma_EUR_CALL.txt')
+m_asia_gamma = get_data('Result/M_Gamma_ASIA_CALL.txt')
+m_eur_vega = get_data('Result/M_Vega_EUR_CALL.txt')
+m_asia_vega = get_data('Result/M_Vega_ASIA_CALL.txt')
+m_eur_rho = get_data('Result/M_Rho_EUR_CALL.txt')
+m_asia_rho = get_data('Result/M_Rho_ASIA_CALL.txt')
 
-plot_greek(eur_delta, asia_delta, 'delta')
-plot_greek(eur_gamma, asia_gamma, 'gamma')
-plot_greek(eur_vega, asia_vega, 'vega')
-plot_greek(eur_rho, asia_rho, 'rho')
+# Finite difference
+fd_eur_delta = get_data('Result/FD_Delta_EUR_CALL.txt')
+fd_asia_delta = get_data('Result/FD_Delta_ASIA_CALL.txt')
+fd_eur_gamma = get_data('Result/FD_Gamma_EUR_CALL.txt')
+fd_asia_gamma = get_data('Result/FD_Gamma_ASIA_CALL.txt')
+fd_eur_vega = get_data('Result/FD_Vega_EUR_CALL.txt')
+fd_asia_vega = get_data('Result/FD_Vega_ASIA_CALL.txt')
+fd_eur_rho = get_data('Result/FD_Rho_EUR_CALL.txt')
+fd_asia_rho = get_data('Result/FD_Rho_ASIA_CALL.txt')
+
+plot_greek(fd_eur_delta, fd_asia_delta, m_eur_delta, m_asia_delta, 'delta')
+plot_greek(fd_eur_gamma, fd_asia_gamma, m_eur_gamma, m_asia_gamma, 'gamma')
+plot_greek(fd_eur_vega, fd_asia_vega, m_eur_vega, m_asia_vega, 'vega')
+plot_greek(fd_eur_rho, fd_asia_rho, m_eur_rho, m_asia_rho, 'rho')
