@@ -1,6 +1,7 @@
 #include"FiniteDiff.h"
 #include<iostream>
 #include<math.h>
+#include<vector>
 using namespace std;
 
 FiniteDiff::FiniteDiff(float S0_, float r_, float sigma_, float T_, float K_, int N_, int M_, float ubound_):
@@ -13,30 +14,25 @@ float FiniteDiff::payoff(float xm){
 }	
 	
 float FiniteDiff::getPrice(float t, float S){
-	
-	
-	float** uMat = new float*[M+1];
-	
-    for (int i = 0; i < M+1; i++)
-        uMat[i] = new float[N+1];
+	std::vector<std::vector<float> > uMat(N + 1, std::vector<float>(M + 1));
 
 	float p = pow(sigma,2)*dt/2./pow(dx,2)*(1-dx/2.);
 	float q = pow(sigma,2)*dt/2./pow(dx,2)*(1+dx/2.);
 	
-	for (int i = 0; i < M+1; i++){
-		cout << "payoff((-ubound+i*dx))=" << payoff((-ubound+i*dx)) << endl;
+	for (int i =0; i < M+1; i++){
 		float u = -ubound+i*dx;
 		uMat[N][i] = payoff(u);
-		
 	}
-	cout << "uMat[N][0]=" << uMat[N][0] << S0 << endl;
+
+	cout << "uMat[N][0]=" << uMat[N][0] << endl;
 	for (int i = N-1; i>=0; i--){        //backward iteration
 		uMat[i][0] = payoff(-ubound);    //Dirichlet left boundary condition
 		uMat[i][M] = payoff(ubound);	//Dirichlet right boundary condition
-
+	
 		for (int j = 1; j < M; j++){
-		//u[i-1,1:-1] = p*u[i,2:]+q*u[i,:-2] + (1.-p-q)*u[i,1:-1]
-		uMat[i][j] = p * uMat[i-1][j+1] + q*uMat[i-1][j-1] + (1-p-q)*uMat[i-1][j];
+			//u[i-1,1:-1] = p*u[i,2:]+q*u[i,:-2] + (1.-p-q)*u[i,1:-1]
+			//cout << "i: " << i << "j: " << j;
+			uMat[i][j] = p * uMat[i+1][j+1] + q*uMat[i+1][j-1] + (1-p-q)*uMat[i+1][j];
 		}
 	}
 
@@ -44,11 +40,6 @@ float FiniteDiff::getPrice(float t, float S){
 	int n = floor(t/dt);
 	float u = uMat[n][m];
 	
-	for (int j = 0; j < M+1; j++)
-        delete[] uMat[j];
-    delete[] uMat;
-
-
 	return u;
 }
 
