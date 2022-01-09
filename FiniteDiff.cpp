@@ -1,98 +1,70 @@
 #include"FiniteDiff.h"
 #include<iostream>
 #include<math.h>
-#include"utility.h"
 using namespace std;
 
-FiniteDiff::FiniteDiff(float S0_, float r_, float sigma_, float T_, float K_, int I_, int N_) :
-	S0(S0_), r(r_), sigma(sigma_), T(T_), K(K_), I(I_), N(N_) {};
+FiniteDiff::FiniteDiff(float S0_, float r_, float sigma_, float T_, float K_, int N_, int M_, float ubound_):
+	S0(S0_), r(r_), sigma(sigma_), T(T_), K(K_), N(N_), M(M_), ubound(ubound_) {};
 
-FiniteDiff::FiniteDiff() :S0(100), r(0), sigma(0.2), T(1), K(100), I(100), N(10000) {};
+FiniteDiff::FiniteDiff(): S0(100), r(0), sigma(0.2), T(1), K(100), N(1600), M(400), ubound(2) {};
+	
+float FiniteDiff::payoff(float xm){	
+	return (S0*exp(xm) - K) * (S0*exp(xm) > K);
+}	
+	
+float FiniteDiff::getPrice(float t, float S){
+	
+	
+	float** uMat = new float*[M+1];
+	
+    for (int i = 0; i < M+1; i++)
+        uMat[i] = new float[N+1];
 
-// n is the time of simulation
-vector<float> FiniteDiff::rho(string option_type, int N) {
-	vector<float> rhos, S;
-	float WT, r_sum = 0;
-	float sigma2 = pow(sigma, 2);
-	float b = r - sigma2 / 2;
-
-	for (int i = 0; i < N; i++) {
-		S = generate_St(S0, r, sigma, I, h);
-		float ST = S.back();
-
-		if (option_type == "EUR_CALL") {
-			float actualised_payoff = exp(-r * T) * payoff(option_type, S, K);
-			WT = (log(ST / S0) - b) / sigma;
-			r_sum += 0;
-		}
-		else if (option_type == "ASIA_CALL") {
-			r_sum += 0;
-		}
-		rhos.push_back(r_sum / (i + 1));
+	float p = pow(sigma,2)*dt/2./pow(dx,2)*(1-dx/2.);
+	float q = pow(sigma,2)*dt/2./pow(dx,2)*(1+dx/2.);
+	
+	for (int i = 0; i < M+1; i++){
+		cout << "payoff((-ubound+i*dx))=" << payoff((-ubound+i*dx)) << endl;
+		float u = -ubound+i*dx;
+		uMat[N][i] = payoff(u);
+		
 	}
-	return rhos;
+	cout << "uMat[N][0]=" << uMat[N][0] << S0 << endl;
+	for (int i = N-1; i>=0; i--){        //backward iteration
+		uMat[i][0] = payoff(-ubound);    //Dirichlet left boundary condition
+		uMat[i][M] = payoff(ubound);	//Dirichlet right boundary condition
+
+		for (int j = 1; j < M; j++){
+		//u[i-1,1:-1] = p*u[i,2:]+q*u[i,:-2] + (1.-p-q)*u[i,1:-1]
+		uMat[i][j] = p * uMat[i-1][j+1] + q*uMat[i-1][j-1] + (1-p-q)*uMat[i-1][j];
+		}
+	}
+
+	int m = floor(log(S/S0)/dx);
+	int n = floor(t/dt);
+	float u = uMat[n][m];
+	
+	for (int j = 0; j < M+1; j++)
+        delete[] uMat[j];
+    delete[] uMat;
+
+
+	return u;
 }
 
 
-vector<float> FiniteDiff::delta(string option_type, int N) {
-	vector<float> Deltas, S;
-	float sigma2 = pow(sigma, 2);
-	float b = r - sigma2 / 2;
-	float d_sum = 0;
 
-	for (int i = 0; i < N; i++) {
-		S = generate_St(S0, r, sigma, I, h);
-
-		if (option_type == "EUR_CALL") {
-			float ST = S.back();
-			d_sum += exp(-r * T) * ST / S0 * (ST > S0);
-		}
-		else if (option_type == "ASIA_CALL") {
-			float ST_bar = Mean(S);
-			d_sum += exp(-r * T) * ST_bar / S0 * (ST_bar > S0);
-		}
-		Deltas.push_back(d_sum / (i + 1));
-	}
-	return Deltas;
+float FiniteDiff::delta(float t, float x, float dx) {
+	
+	
+	return 0;
 }
 
-vector<float> FiniteDiff::gamma(string option_type, int N) {
-	vector<float> Gammas, S;
-	float WT, g_sum = 0;
-	float sigma2 = pow(sigma, 2);
-	float b = r - sigma2 / 2;
-
-	for (int i = 0; i < N; i++) {
-		S = generate_St(S0, r, sigma, I, h);
-		float ST = S.back();
-
-		if (option_type == "EUR_CALL") {
-			float actualised_payoff = exp(-r * T) * payoff(option_type, S, K);
-			WT = (log(ST / S0) - b) / sigma;
-			g_sum += 0;
-		}
-		else if (option_type == "ASIA_CALL") {
-			float Integral_S = Sum(S) * h; //integration of S from 0 to T
-			float Upper_ST = Integral_S / T; //integration over time
-			float actualised_payoff = exp(-r * T) * payoff(option_type, S, K);
-			g_sum += 0;
-		}
-		Gammas.push_back(g_sum / (i + 1));
-	}
-	return Gammas;
+float FiniteDiff::gamma(float t, float x, float dx) {
+	
+	
+	return 0;
 }
 
-vector<float> FiniteDiff::vega(string option_type, int N) {
-	vector<float> Vegas, Gammas;
-	float factor = pow(S0, 2) * sigma * T;
-	if (option_type == "EUR_CALL") {
-		Gammas = gamma(option_type, N);
-	}
-	else if (option_type == "ASIA_CALL") {
-		Gammas = gamma(option_type, N);
-	}
-	Vegas = multiply(Gammas, factor);
 
-	return Vegas;
-}
 
