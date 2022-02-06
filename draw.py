@@ -4,9 +4,9 @@ Version: 1.0
 Author: SHAO Nuoya
 Date: 2021-12-28 02:05:04
 LastEditors: SHAO Nuoya
-LastEditTime: 2022-02-06 10:28:00
+LastEditTime: 2022-02-06 11:08:28
 '''
-from turtle import color
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -63,14 +63,14 @@ def plot_greek(FD_eur_data, FD_asia_data, M_eur_data, M_asia_data, greek_name):
     plt.subplot(2, 1, 2)
 
     # Finite difference method
-    plt.plot(range(100, len(FD_asia_data)),
-             FD_asia_data[100:],
+    plt.plot(range(10, len(FD_asia_data)),
+             FD_asia_data[10:],
              label='Finite Diff')
 
     # Malliavin method
-    plt.plot(range(100,
+    plt.plot(range(10,
                    len(M_asia_data) - 1),
-             M_asia_data[100:-1],
+             M_asia_data[10:-1],
              label='Malliavin',
              color='green')
     plt.title(f"asian call {greek_name}")

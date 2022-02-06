@@ -1,28 +1,15 @@
-/*
- * @Description: 
- * @Version: 1.0
- * @Author: SHAO Nuoya
- * @Date: 2021-12-28 01:36:15
- * @LastEditors: SHAO Nuoya
- * @LastEditTime: 2022-02-06 10:35:28
- */
-//#include"Malliavin.h"
-//#include"Malliavin.cpp"
+#include"Malliavin.h"
 #include"PDE_FiniteDiff.h"
-#include"PDE_FiniteDiff.cpp"
-//#include"utility.h"
-//#include"utility.cpp"
+#include"utility.h"
 #include <iostream>
 #include <stdio.h>
 using namespace std;
 
 int main(void) {
 
-	/*
 	vector<float> delta1, delta2, gamma1, gamma2, vega1, vega2, rho1, rho2;
 	string option_type1 = "EUR_CALL";
 	string option_type2 = "ASIA_CALL";
-	*/
 
 	// Parameters: S0 K r sigma T
 	float par[5] = { 100, 100, 0, 0.2, 1};
@@ -63,7 +50,7 @@ int main(void) {
 
 	to_txt(rho1, "M_Rho_" + option_type1);
 	to_txt(rho2, "M_Rho_" + option_type2);
-	*/
+	
 
 	// Finite difference method in PDE
 
