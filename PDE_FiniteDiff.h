@@ -3,7 +3,7 @@
 #include<vector>
 
 using namespace std;
-class FiniteDiff {
+class PDE_FiniteDiff {
 private:
 	float S0; //current price of underlying
 	float r; //risk free rate
@@ -19,16 +19,16 @@ public:
 	float ubound;   //space upper bound; lower bound = -ubound
 	float dx = 2 * ubound / M; //space interval
 
-	FiniteDiff(float S0, float r, float sigma, float T, float K, int N, int M, float ubound);
-	FiniteDiff();
+	PDE_FiniteDiff(float S0, float r, float sigma, float T, float K, int N, int M, float ubound);
+	PDE_FiniteDiff();
 
 
 	float payoff(float xm);	
 	float getPrice(float t, float x);
 
 	//vector<float> rho(float t, float x, float r, float dr);
-	float delta(float t, float x, float dx);
-	float gamma(float t, float x, float dx);
+	float delta(float t, float S);
+	float gamma(float t, float S);
 	//vector<float> vega(float t, float x, float sigma);
 };
 
