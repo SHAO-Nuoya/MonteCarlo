@@ -7,20 +7,32 @@ int main(void) {
 	string option_type1 = "EUR_CALL";
 	string option_type2 = "ASIA_CALL";
 
-	/*
+	// Parameters: S0 K r sigma T
+	float par[5] = { 100, 100, 0, 0.2, 1};
+
+	// Theoretial value for EUR_CALL
+	float eur_delta = greeks("delta", par, option_type1);
+	float eur_gamma = greeks("gamma", par, option_type1);
+	float eur_vega = greeks("vega", par, option_type1);
+	float eur_rho = greeks("rho", par, option_type1);
+
 	// Maliavin method
 	Malliavin malliavin;
 
 	delta1 = malliavin.delta(option_type1, malliavin.N);
+	delta1.push_back(eur_delta);
 	delta2 = malliavin.delta(option_type2, malliavin.N);
 	
 	gamma1 = malliavin.gamma(option_type1, malliavin.N);
+	gamma1.push_back(eur_gamma);
 	gamma2 = malliavin.gamma(option_type2, malliavin.N);
 	
 	vega1 = malliavin.vega(option_type1, malliavin.N);
+	vega1.push_back(eur_vega);
 	vega2 = malliavin.vega(option_type2, malliavin.N);
 	
 	rho1 = malliavin.rho(option_type1, malliavin.N);
+	rho1.push_back(eur_rho);
 	rho2 = malliavin.rho(option_type2, malliavin.N);
 
 	to_txt(delta1, "M_Delta_" + option_type1);
@@ -34,7 +46,8 @@ int main(void) {
 
 	to_txt(rho1, "M_Rho_" + option_type1);
 	to_txt(rho2, "M_Rho_" + option_type2);
-	*/
+	
+	/*
 	// Finite difference method
 	FiniteDiff finite_diff;
 
@@ -61,6 +74,6 @@ int main(void) {
 
 	to_txt(rho1, "FD_Rho_" + option_type1);
 	to_txt(rho2, "FD_Rho_" + option_type2);
-
+	*/
 	return 0;
 }
