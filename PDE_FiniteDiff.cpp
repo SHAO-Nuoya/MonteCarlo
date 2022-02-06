@@ -68,5 +68,11 @@ float PDE_FiniteDiff::gamma(float t, float S) {
 	return gamma;
 }
 
-
+float PDE_vega(float t, float S) {
+	float sigma_1 = 0.2;
+	float sigma_2 = 0.2001;
+	PDE_FiniteDiff PDE_FD1 = PDE_FiniteDiff(100, 0, sigma_1, 1, 100, 10000, 100, 2);
+	PDE_FiniteDiff PDE_FD2 = PDE_FiniteDiff(100, 0, sigma_2, 1, 100, 10000, 100, 2);
+	return (PDE_FD1.getPrice(t, S) - PDE_FD2.getPrice(t, S)) / (sigma_1 - sigma_2);
+}
 

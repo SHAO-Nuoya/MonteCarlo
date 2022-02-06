@@ -32,3 +32,5 @@ public:
 	//vector<float> vega(float t, float x, float sigma);
 };
 
+
+float PDE_vega(float t, float S);
