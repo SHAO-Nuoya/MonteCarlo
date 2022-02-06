@@ -4,8 +4,9 @@ Version: 1.0
 Author: SHAO Nuoya
 Date: 2021-12-28 02:05:04
 LastEditors: SHAO Nuoya
-LastEditTime: 2022-01-07 20:18:05
+LastEditTime: 2022-02-06 10:28:00
 '''
+from turtle import color
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -34,24 +35,44 @@ def plot_corr(data1, data2):
 def plot_greek(FD_eur_data, FD_asia_data, M_eur_data, M_asia_data, greek_name):
     plt.figure(figsize=(10, 10))
 
+    # euro option
     plt.subplot(2, 1, 1)
-    plt.plot(range(500, len(FD_eur_data)),
-             FD_eur_data[500:],
+
+    # Finite difference method
+    plt.plot(range(100, len(FD_eur_data)),
+             FD_eur_data[100:],
              label='Finite Diff')
-    plt.plot(range(500, len(M_eur_data)), M_eur_data[500:], label='Malliavin')
+
+    # Malliavin method
+    plt.plot(range(100,
+                   len(M_eur_data) - 1),
+             M_eur_data[100:-1],
+             label='Malliavin',
+             color='green')
+
+    # Theoretical value
+    plt.axhline(y=M_eur_data[-1], color='red', label='Theo')
+
     plt.title(f"european call {greek_name}")
     plt.xlabel('n')
     plt.ylabel(greek_name)
     plt.grid()
     plt.legend()
 
+    # asian option
     plt.subplot(2, 1, 2)
-    plt.plot(range(500, len(FD_asia_data)),
-             FD_asia_data[500:],
+
+    # Finite difference method
+    plt.plot(range(100, len(FD_asia_data)),
+             FD_asia_data[100:],
              label='Finite Diff')
-    plt.plot(range(500, len(M_asia_data)),
-             M_asia_data[500:],
-             label='Malliavin')
+
+    # Malliavin method
+    plt.plot(range(100,
+                   len(M_asia_data) - 1),
+             M_asia_data[100:-1],
+             label='Malliavin',
+             color='green')
     plt.title(f"asian call {greek_name}")
     plt.xlabel('n')
     plt.ylabel(greek_name)
