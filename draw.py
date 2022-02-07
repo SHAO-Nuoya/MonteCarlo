@@ -4,7 +4,7 @@ Version: 1.0
 Author: SHAO Nuoya
 Date: 2021-12-28 02:05:04
 LastEditors: SHAO Nuoya
-LastEditTime: 2022-02-06 23:13:05
+LastEditTime: 2022-02-07 19:57:58
 '''
 
 import matplotlib.pyplot as plt
@@ -38,14 +38,14 @@ def plot_greek(FD_eur_data, FD_asia_data, M_eur_data, M_asia_data, greek_name):
     plt.subplot(2, 1, 1)
 
     # Finite difference method
-    plt.plot(range(10, len(FD_eur_data)),
-             FD_eur_data[10:],
+    plt.plot(range(100, len(FD_eur_data)),
+             FD_eur_data[100:],
              label='Finite Diff',
              linestyle="--")
 
     # Malliavin method
-    plt.plot(range(10, len(M_eur_data)),
-             M_eur_data[10:],
+    plt.plot(range(100, len(M_eur_data)),
+             M_eur_data[100:],
              label='Malliavin',
              color='purple',
              linestyle="--")
@@ -65,14 +65,14 @@ def plot_greek(FD_eur_data, FD_asia_data, M_eur_data, M_asia_data, greek_name):
     plt.subplot(2, 1, 2)
 
     # Finite difference method
-    plt.plot(range(10, len(FD_asia_data)),
-             FD_asia_data[10:],
+    plt.plot(range(100, len(FD_asia_data)),
+             FD_asia_data[100:],
              label='Finite Diff',
              linestyle="--")
 
     # Malliavin method
-    plt.plot(range(10, len(M_asia_data)),
-             M_asia_data[10:],
+    plt.plot(range(100, len(M_asia_data)),
+             M_asia_data[100:],
              label='Malliavin',
              color='purple',
              linestyle="--")

@@ -6,17 +6,14 @@
  * @Author: SHAO Nuoya
  * @Date: 2021-12-28 01:36:15
  * @LastEditors: SHAO Nuoya
- * @LastEditTime: 2022-02-06 10:35:28
+ * @LastEditTime: 2022-02-07 19:19:03
  */
 
 //#include"Malliavin.h"
 //#include"Malliavin.cpp"
 #include"PDE_FiniteDiff.h"
-#include"PDE_FiniteDiff.cpp"
 #include"MC_FiniteDiff.h"
-#include"MC_FiniteDiff.cpp"
 #include"utility.h"
-#include"utility.cpp"
 
 
 #include <iostream>
@@ -66,7 +63,7 @@ int main(void) {
 	to_txt(vega1, "M_Vega_" + option_type1);
 	to_txt(vega2, "M_Vega_" + option_type2);
 	
-	*/
+	
 
 	// Finite difference method with PDE
 
@@ -81,7 +78,7 @@ int main(void) {
 	// Finite difference method with Monte Carlo
 
 
-	/*
+	
 	to_txt(delta1, "FD_Delta_" + option_type1);
 	to_txt(delta2, "FD_Delta_" + option_type2);
 
@@ -90,17 +87,25 @@ int main(void) {
 
 	to_txt(vega1, "FD_Vega_" + option_type1);
 	to_txt(vega2, "FD_Vega_" + option_type2);
-
-	to_txt(rho1, "FD_Rho_" + option_type1);
-	to_txt(rho2, "FD_Rho_" + option_type2);
 	*/
 
 
 	// Monte Carlo finite difference method
 	MC_FiniteDiff MC_finite_diff;
 
-	cout << "price=" << MC_finite_diff.delta("EUR_CALL", 10000).back() << endl;
-
+	vector<float> FD_EURO_delta = MC_finite_diff.delta(option_type1);
+	to_txt(FD_EURO_delta, "FD_Delta_" + option_type1);
+	vector<float> FD_EURO_gamma = MC_finite_diff.gamma(option_type1);
+	to_txt(FD_EURO_gamma, "FD_Gamma_" + option_type1);
+	vector<float> FD_EURO_vega = MC_finite_diff.vega(option_type1);
+	to_txt(FD_EURO_vega, "FD_Vega_" + option_type1);
+	
+	vector<float> FD_ASIA_delta = MC_finite_diff.delta(option_type2);
+	to_txt(FD_ASIA_delta, "FD_Delta_" + option_type2);
+	vector<float> FD_ASIA_gamma = MC_finite_diff.gamma(option_type2);
+	to_txt(FD_ASIA_gamma, "FD_Gamma_" + option_type2);
+	vector<float> FD_ASIA_vega = MC_finite_diff.vega(option_type2);
+	to_txt(FD_ASIA_vega, "FD_Vega_" + option_type2);
 
 	/*
 	// Finite difference method in PDE: European option; Explicit scheme

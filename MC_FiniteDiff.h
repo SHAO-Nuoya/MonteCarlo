@@ -20,9 +20,9 @@ public:
 	MC_FiniteDiff();
 	
 	//simulation
-    vector<float> price(string option_type, int n);
-	vector<float> delta(string option_type, int n);
-	vector<float> gamma(string option_type, int n);
-	vector<float> vega(string option_type, int n);
+    vector<float> price(string option_type);
+	vector<float> delta(string option_type);
+	vector<float> gamma(string option_type);
+	vector<float> vega(string option_type);
 };
 
