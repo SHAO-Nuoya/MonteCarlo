@@ -18,6 +18,9 @@ float Var(const vector<float> vec) {
     return var / N;
 }
 
+double normalCDF(double value) { return 0.5 * erfc(-value * sqrt(0.5)); };
+double normalPDF(double value) { return exp(-pow(value, 2) / 2) / sqrt(2 * PI); };
+
 //operations for vector
 vector<float> multiply(const vector<float> v, float d) {
     vector<float> res;
@@ -26,6 +29,10 @@ vector<float> multiply(const vector<float> v, float d) {
     }
     return res;
 };
+float Integral(vector<float> v, float step) {
+	return Sum(v) * step;
+};
+
 
 float generate_N01() {
 	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
@@ -39,7 +46,7 @@ vector<float> generate_St(float S0, float r, float sigma, float I, float h) {
 	vector<float> S;
 	S.push_back(S0);
 	float t, s, s_pre, dw;
-	float b = r - pow(sigma, 2) / 2;
+
 	for (int i = 1; i < I; i++) {
 		t = i * h;
 		s_pre = S.back();
@@ -64,20 +71,28 @@ float payoff(string option_type, vector<float> S, float K) {
 
 //analytical Greeks
 //no analytical solution for arithmetic asian option
-float greeks(string greek_name, string option_type = "EUR_CALL") {
+float greeks(string greek_name,float* par, string option_type = "EUR_CALL") {
 	float greek = 0;
+	float S0 = par[0];
+	float K = par[1];
+	float r = par[2];
+	float sigma = par[3];
+	float T = par[4];
+	float d1;
+
 	if (option_type == "EUR_CALL") {
+		d1 = (log(S0 / K) + (r + pow(sigma, 2) / 2) * T) / (sigma * sqrt(T));
 		if (greek_name == "delta") {
-			greek = 0;
+			greek = normalCDF(d1);
 		}
 		else if (greek_name == "gamma") {
-			greek = 0;
+			greek = normalPDF(d1)/(S0*sigma*sqrt(T));
 		}
 		else if (greek_name == "vega") {
-			greek = 0;
+			greek = S0 * sqrt(T) * normalPDF(d1);
 		}
 		else if (greek_name == "rho") {
-			greek = 0;
+			greek = K * T * normalPDF(d1 - sigma * sqrt(T));
 		}
 	}
 	else if (option_type == "") {

@@ -50,7 +50,7 @@ vector<float> Malliavin::delta(string option_type, int N) {
 			d_sum += actualised_payoff * WT / (S0 * sigma * T);
 		}
 		else if (option_type == "ASIA_CALL") {
-			float Integral_S = Sum(S) * h; //integration of S from 0 to T
+			float Integral_S = Integral(S, h); //integration of S from 0 to T
 			float actualised_payoff = exp(-r * T) * payoff(option_type, S, K);
 			d_sum += actualised_payoff * (2 * (ST - S0) / (S0 * sigma2 * Integral_S) + (1 - 2 * r / sigma2) / S0);
 		}
@@ -75,7 +75,7 @@ vector<float> Malliavin::gamma(string option_type, int N) {
 			g_sum += actualised_payoff * (pow(WT, 2) / (sigma * T) - WT - 1 / sigma) / (pow(S0, 2) * sigma * T);
 		}
 		else if (option_type == "ASIA_CALL") {
-			float Integral_S = Sum(S) * h; //integration of S from 0 to T
+			float Integral_S = Integral(S, h); //integration of S from 0 to T
 			float Upper_ST = Integral_S / T; //integration over time
 			float actualised_payoff = exp(-r * T) * payoff(option_type, S, K);
 			g_sum += 4 * actualised_payoff * (pow(ST - S0, 2) + b * r * pow(T * Upper_ST, 2) - 2 * r * T * ST * Upper_ST + 2 * b * T * S0 * Upper_ST) / pow(sigma2 * S0 * T * Upper_ST, 2);
