@@ -7,7 +7,7 @@ using namespace std;
 PDE_FiniteDiff::PDE_FiniteDiff(float S0_, float r_, float sigma_, float T_, float K_, int N_, int M_, float ubound_):
 	S0(S0_), r(r_), sigma(sigma_), T(T_), K(K_), N(N_), M(M_), ubound(ubound_) {};
 
-PDE_FiniteDiff::PDE_FiniteDiff(): S0(100), r(0), sigma(0.2), T(1), K(100), N(1600), M(400), ubound(2) {};
+PDE_FiniteDiff::PDE_FiniteDiff(): S0(100), r(0), sigma(0.2), T(1), K(100), N(10000), M(100), ubound(2) {};
 	
 float PDE_FiniteDiff::payoff(float xm){	
 	return (S0*exp(xm) - K) * (S0*exp(xm) > K);
@@ -68,5 +68,11 @@ float PDE_FiniteDiff::gamma(float t, float S) {
 	return gamma;
 }
 
-
+float PDE_vega(float t, float S) {
+	float sigma_1 = 0.2;
+	float sigma_2 = 0.2001;
+	PDE_FiniteDiff PDE_FD1 = PDE_FiniteDiff(100, 0, sigma_1, 1, 100, 10000, 100, 2);
+	PDE_FiniteDiff PDE_FD2 = PDE_FiniteDiff(100, 0, sigma_2, 1, 100, 10000, 100, 2);
+	return (PDE_FD1.getPrice(t, S) - PDE_FD2.getPrice(t, S)) / (sigma_1 - sigma_2);
+}
 

@@ -91,9 +91,6 @@ float greeks(string greek_name,float* par, string option_type = "EUR_CALL") {
 		else if (greek_name == "vega") {
 			greek = S0 * sqrt(T) * normalPDF(d1);
 		}
-		else if (greek_name == "rho") {
-			greek = K * T * normalPDF(d1 - sigma * sqrt(T));
-		}
 	}
 	else if (option_type == "") {
 		if (greek_name == "delta") {
@@ -103,9 +100,6 @@ float greeks(string greek_name,float* par, string option_type = "EUR_CALL") {
 			greek = 0;
 		}
 		else if (greek_name == "vega") {
-			greek = 0;
-		}
-		else if (greek_name == "rho") {
 			greek = 0;
 		}
 	}
