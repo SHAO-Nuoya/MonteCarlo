@@ -17,6 +17,7 @@ double normalPDF(double value);
 
 //operations for vector
 vector<float> multiply(vector<float> v, float d);
+vector<float> vector_multiply(vector<float> v1, vector<float> v2);
 float Integral(vector<float> v, float step);
 
 //simulation of spot

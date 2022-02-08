@@ -41,7 +41,6 @@ vector<float> MC_FiniteDiff::delta(string option_type) {
         
         Deltas.push_back((d_sum2-d_sum1)/(i+1)/(2*dS0));
 	}
-    cout << d_sum1/N << "  " << d_sum2/N << endl;
 	return Deltas;
 }
 

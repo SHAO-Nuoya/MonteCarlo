@@ -1,23 +1,9 @@
-
-
-/*
- * @Description: 
- * @Version: 1.0
- * @Author: SHAO Nuoya
- * @Date: 2021-12-28 01:36:15
- * @LastEditors: SHAO Nuoya
- * @LastEditTime: 2022-02-07 19:19:03
- */
-
-//#include"Malliavin.h"
-//#include"Malliavin.cpp"
+#include"Malliavin.h"
 #include"PDE_FiniteDiff.h"
 #include"MC_FiniteDiff.h"
 #include"utility.h"
 
-
 #include <iostream>
-#include <stdio.h>
 using namespace std;
 
 

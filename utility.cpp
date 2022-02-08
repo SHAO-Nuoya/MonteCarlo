@@ -29,6 +29,15 @@ vector<float> multiply(const vector<float> v, float d) {
     }
     return res;
 };
+
+vector<float> vector_multiply(vector<float> v1, vector<float> v2) {
+	vector<float> res;
+	for (int i = 0; i < v1.size(); i++) {
+		res.push_back(v1[i] * v2[i]);
+	}
+	return res;
+};
+
 float Integral(vector<float> v, float step) {
 	return Sum(v) * step;
 };

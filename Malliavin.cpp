@@ -86,15 +86,45 @@ vector<float> Malliavin::gamma(string option_type, int N) {
 }
 
 vector<float> Malliavin::vega(string option_type, int N) {
-	vector<float> Vegas, Gammas;
+	vector<float> Vegas, Gammas, S;
 	float factor = pow(S0, 2) * sigma * T;
+	float b = r - pow(sigma, 2) / 2;
+
 	if (option_type == "EUR_CALL") {
 		Gammas = gamma(option_type, N);
+		Vegas = multiply(Gammas, factor);
 	}
 	else if (option_type == "ASIA_CALL") {
-		Gammas = gamma(option_type, N);
+		float ST, actualised_payoff, Integral_S, Upper_ST, vega_sum;
+		float INT_St_Wt_dt, INT_t_St_dt, INT_t2_St_dt, INT_INT_St_Wt_dt_dWt = 0;
+		vector<float> Wt, vec_t, vec_t2;
+		for (int i = 0; i < N; i++) {
+			S = generate_St(S0, r, sigma, I, h);
+
+			for (int j = 0; j++; j < I) {
+				Wt.push_back((log(ST / S0) - b) / sigma);
+				vec_t.push_back(i*h);
+				vec_t2.push_back(pow(i * h, 2));
+			}
+
+			INT_St_Wt_dt = Integral(vector_multiply(S, Wt), h);
+			INT_t_St_dt = Integral(vector_multiply(vec_t, S), h);
+			INT_t2_St_dt = Integral(vector_multiply(vec_t2, S), h);
+
+			for (int k = 1; k++; k < I) {
+				INT_INT_St_Wt_dt_dWt += INT_St_Wt_dt * (Wt[k] - Wt[k - 1]);
+			}
+
+			ST = S.back();
+			actualised_payoff = exp(-r * T) * payoff(option_type, S, K);
+			Integral_S = Integral(S, h); //integration of S from 0 to T
+			Upper_ST = Integral_S / T; //integration over time
+			vega_sum = actualised_payoff * (INT_INT_St_Wt_dt_dWt / sigma * INT_t_St_dt + INT_t2_St_dt * INT_St_Wt_dt / pow(INT_t_St_dt, 2) - Wt.back());
+			Vegas.push_back(vega_sum / (i + 1));
+		}
+
 	}
-	Vegas = multiply(Gammas, factor);
+	
 
 	return Vegas;
 }
