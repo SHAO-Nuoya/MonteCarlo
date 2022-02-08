@@ -1,4 +1,5 @@
 #include"utility.h"
+#include"random-singleton.hpp"
 #include <chrono>
 #include <random>
 using namespace std;
@@ -44,11 +45,7 @@ float Integral(vector<float> v, float step) {
 
 
 float generate_N01() {
-	unsigned seed = chrono::system_clock::now().time_since_epoch().count();
-	default_random_engine e(seed);
-	normal_distribution<float> dis(0, 1);
-	float N01 = dis(e);
-	return N01;
+	return Random::Gaussian();;
 }
 
 vector<float> generate_St(float S0, float r, float sigma, float I, float h) {

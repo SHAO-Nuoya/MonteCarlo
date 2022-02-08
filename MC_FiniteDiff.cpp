@@ -70,7 +70,7 @@ vector<float> MC_FiniteDiff::gamma(string option_type) {
 }
 
 vector<float> MC_FiniteDiff::vega(string option_type) {
-	float dsig = 0.1;
+	float dsig = 0.01;
    
     vector<float> St1,St2;
     float d_sum1 = 0;

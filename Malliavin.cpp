@@ -10,7 +10,7 @@ Malliavin::Malliavin(float S0_, float r_, float sigma_, float T_, float K_, int 
 Malliavin::Malliavin():S0(100), r(0), sigma(0.2), T(1), K(100), I(100), N(10000) {};
 
 // n is the time of simulation
-vector<float> Malliavin::rho(string option_type, int N) {
+vector<float> Malliavin::rho(string option_type) {
 	vector<float> rhos, S;
 	float WT, r_sum = 0;
 	float sigma2 = pow(sigma, 2);
@@ -34,7 +34,7 @@ vector<float> Malliavin::rho(string option_type, int N) {
 }
 
 
-vector<float> Malliavin::delta(string option_type, int N) {
+vector<float> Malliavin::delta(string option_type) {
 	vector<float> Deltas, S;
 	float WT, d_sum = 0;
 	float sigma2 = pow(sigma, 2);
@@ -59,7 +59,7 @@ vector<float> Malliavin::delta(string option_type, int N) {
 	return Deltas;
 }
 
-vector<float> Malliavin::gamma(string option_type, int N) {
+vector<float> Malliavin::gamma(string option_type) {
 	vector<float> Gammas, S;
 	float WT, g_sum = 0;
 	float sigma2 = pow(sigma, 2);
@@ -85,33 +85,34 @@ vector<float> Malliavin::gamma(string option_type, int N) {
 	return Gammas;
 }
 
-vector<float> Malliavin::vega(string option_type, int N) {
+vector<float> Malliavin::vega(string option_type) {
 	vector<float> Vegas, Gammas, S;
 	float factor = pow(S0, 2) * sigma * T;
 	float b = r - pow(sigma, 2) / 2;
 
 	if (option_type == "EUR_CALL") {
-		Gammas = gamma(option_type, N);
+		Gammas = gamma(option_type);
 		Vegas = multiply(Gammas, factor);
 	}
 	else if (option_type == "ASIA_CALL") {
 		float ST, actualised_payoff, Integral_S, Upper_ST, vega_sum;
 		float INT_St_Wt_dt, INT_t_St_dt, INT_t2_St_dt, INT_INT_St_Wt_dt_dWt = 0;
-		vector<float> Wt, vec_t, vec_t2;
 		for (int i = 0; i < N; i++) {
+			vector<float> Wt, vec_t, vec_t2;
+
 			S = generate_St(S0, r, sigma, I, h);
 
-			for (int j = 0; j++; j < I) {
-				Wt.push_back((log(ST / S0) - b) / sigma);
-				vec_t.push_back(i*h);
-				vec_t2.push_back(pow(i * h, 2));
+			for (int j = 0; j < S.size(); j++) {
+				Wt.push_back((log(S[j] / S0) - b) / sigma);
+				vec_t.push_back(j * h);
+				vec_t2.push_back(pow(j * h, 2));
 			}
 
 			INT_St_Wt_dt = Integral(vector_multiply(S, Wt), h);
 			INT_t_St_dt = Integral(vector_multiply(vec_t, S), h);
 			INT_t2_St_dt = Integral(vector_multiply(vec_t2, S), h);
 
-			for (int k = 1; k++; k < I) {
+			for (int k = 1; k < Wt.size(); k++) {
 				INT_INT_St_Wt_dt_dWt += INT_St_Wt_dt * (Wt[k] - Wt[k - 1]);
 			}
 
@@ -122,10 +123,11 @@ vector<float> Malliavin::vega(string option_type, int N) {
 			vega_sum = actualised_payoff * (INT_INT_St_Wt_dt_dWt / sigma * INT_t_St_dt + INT_t2_St_dt * INT_St_Wt_dt / pow(INT_t_St_dt, 2) - Wt.back());
 			Vegas.push_back(vega_sum / (i + 1));
 		}
-
+		/*
+		Gammas = gamma(option_type);
+		Vegas = multiply(Gammas, factor);
+		*/
 	}
-	
-
 	return Vegas;
 }
 

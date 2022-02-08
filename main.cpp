@@ -2,14 +2,13 @@
 #include"PDE_FiniteDiff.h"
 #include"MC_FiniteDiff.h"
 #include"utility.h"
+#include "Malliavin_localized.h"
 
 #include <iostream>
 using namespace std;
 
 
 int main(void) {
-
-	vector<float> delta1, delta2, gamma1, gamma2, vega1, vega2, rho1, rho2;
 	string option_type1 = "EUR_CALL";
 	string option_type2 = "ASIA_CALL";
 
@@ -25,34 +24,54 @@ int main(void) {
 
 	to_txt(theo_eur_call_greeks, "theo_eur_call_greeks");
 
-
-	/*
-
+	
 	// Maliavin method
+	cout << "Begin Malliavin method" << endl;
 	Malliavin malliavin;
 
-	delta1 = malliavin.delta(option_type1, malliavin.N);
-	delta2 = malliavin.delta(option_type2, malliavin.N);
+	vector<float> m_delta1 = malliavin.delta(option_type1);
+	vector<float> m_delta2 = malliavin.delta(option_type2);
 	
-	gamma1 = malliavin.gamma(option_type1, malliavin.N);
-	gamma2 = malliavin.gamma(option_type2, malliavin.N);
+	vector<float> m_gamma1 = malliavin.gamma(option_type1);
+	vector<float> m_gamma2 = malliavin.gamma(option_type2);
 	
-	vega1 = malliavin.vega(option_type1, malliavin.N);
-	vega2 = malliavin.vega(option_type2, malliavin.N);
+	vector<float> m_vega1 = malliavin.vega(option_type1);
+	vector<float> m_vega2 = malliavin.vega(option_type2);
 
-	to_txt(delta1, "M_Delta_" + option_type1);
-	to_txt(delta2, "M_Delta_" + option_type2);
+	to_txt(m_delta1, "M_Delta_" + option_type1);
+	to_txt(m_delta2, "M_Delta_" + option_type2);
 
-	to_txt(gamma1, "M_Gamma_" + option_type1);
-	to_txt(gamma2, "M_Gamma_" + option_type2);
+	to_txt(m_gamma1, "M_Gamma_" + option_type1);
+	to_txt(m_gamma2, "M_Gamma_" + option_type2);
 
-	to_txt(vega1, "M_Vega_" + option_type1);
-	to_txt(vega2, "M_Vega_" + option_type2);
-	
-	
+	to_txt(m_vega1, "M_Vega_" + option_type1);
+	to_txt(m_vega2, "M_Vega_" + option_type2);
+
+	// Localized Malliavin method
+	cout << "Begin Localized Malliavin method" << endl;
+	Malliavin_localized ML;
+
+	vector<float> ml_delta1 = ML.delta(option_type1);
+	vector<float> ml_delta2 = ML.delta(option_type2);
+
+	vector<float> ml_gamma1 = ML.gamma(option_type1);
+	vector<float> ml_gamma2 = ML.gamma(option_type2);
+
+	vector<float> ml_vega1 = ML.vega(option_type1);
+	vector<float> ml_vega2 = ML.vega(option_type2);
+
+	to_txt(ml_delta1, "ML_Delta_" + option_type1);
+	to_txt(ml_delta2, "ML_Delta_" + option_type2);
+
+	to_txt(ml_gamma1, "ML_Gamma_" + option_type1);
+	to_txt(ml_gamma2, "ML_Gamma_" + option_type2);
+
+	to_txt(ml_vega1, "ML_Vega_" + option_type1);
+	to_txt(ml_vega2, "ML_Vega_" + option_type2);
+
 
 	// Finite difference method with PDE
-
+	cout << "Begin PDE FD method:" << endl;
 	PDE_FiniteDiff PDE_finite_diff;
 	float pde_delta = PDE_finite_diff.delta(0., 100.);
 	float pde_gamma = PDE_finite_diff.gamma(0., 100.);
@@ -61,22 +80,9 @@ int main(void) {
 	vector<float> PDE_eur_call_greeks = { pde_delta, pde_gamma, pde_vega};
 	to_txt(PDE_eur_call_greeks, "PDE_eur_call_greeks");
 
-	// Finite difference method with Monte Carlo
-
-
-	
-	to_txt(delta1, "FD_Delta_" + option_type1);
-	to_txt(delta2, "FD_Delta_" + option_type2);
-
-	to_txt(gamma1, "FD_Gamma_" + option_type1);
-	to_txt(gamma2, "FD_Gamma_" + option_type2);
-
-	to_txt(vega1, "FD_Vega_" + option_type1);
-	to_txt(vega2, "FD_Vega_" + option_type2);
-	*/
-
 
 	// Monte Carlo finite difference method
+	cout << "Begin Monte Carlo FD method" << endl;
 	MC_FiniteDiff MC_finite_diff;
 
 	vector<float> FD_EURO_delta = MC_finite_diff.delta(option_type1);
@@ -92,19 +98,6 @@ int main(void) {
 	to_txt(FD_ASIA_gamma, "FD_Gamma_" + option_type2);
 	vector<float> FD_ASIA_vega = MC_finite_diff.vega(option_type2);
 	to_txt(FD_ASIA_vega, "FD_Vega_" + option_type2);
-
-	/*
-	// Finite difference method in PDE: European option; Explicit scheme
-
-	PDE_FiniteDiff PDE_finite_diff;
-	cout << "N = " << PDE_finite_diff.N << endl;
-	cout << "M = " << PDE_finite_diff.M << endl;
-	cout << "price = " << PDE_finite_diff.getPrice(0.,100.) << endl;
-	cout << "delta = "<< PDE_finite_diff.delta(0.,100.) << endl;
-	cout << "gamma = " << PDE_finite_diff.gamma(0.,100.) << endl;
-	*/
-
-	
 
 	return 0;
 }
